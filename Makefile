@@ -9,13 +9,13 @@ MAIN_FILE     := src/search.cc
 HEADER_DIRS   := \
 	../libprim/inc \
 	../libtopos/inc \
-	../libstrings/inc \
+	../libstrop/inc \
 	../libgrid/inc
 
 STATIC_LIBS   := \
 	../libprim/bld/libprim.a \
 	../libtopos/bld/libtopos.a \
-	../libstrings/bld/libstrings.a \
+	../libstrop/bld/libstrop.a \
 	../libgrid/bld/libgrid.a
 
 #--------------------- Cpp Lint -----------------------------------------------#

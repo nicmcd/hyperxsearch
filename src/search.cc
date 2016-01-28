@@ -30,7 +30,7 @@
  */
 #include <grid/Grid.h>
 #include <prim/prim.h>
-#include <strings/Strings.h>
+#include <strop/strop.h>
 #include <tclap/CmdLine.h>
 #include <topos/hyperx/Engine.h>
 
@@ -193,14 +193,14 @@ s32 main(s32 _argc, char** _argv) {
     // format the regular values in the row
     grid.set(row, 0, std::to_string(row));
     grid.set(row, 1, std::to_string(res.dimensions));
-    grid.set(row, 2, Strings::vecString<u64>(res.widths).c_str());
-    grid.set(row, 3, Strings::vecString<u64>(res.weights).c_str());
+    grid.set(row, 2, strop::vecString<u64>(res.widths).c_str());
+    grid.set(row, 3, strop::vecString<u64>(res.weights).c_str());
     grid.set(row, 4, std::to_string(res.concentration));
     grid.set(row, 5, std::to_string(res.terminals));
     grid.set(row, 6, std::to_string(res.routers));
     grid.set(row, 7, std::to_string(res.routerRadix));
     grid.set(row, 8, std::to_string(res.channels));
-    grid.set(row, 9, Strings::vecString<f64>(res.bisections).c_str());
+    grid.set(row, 9, strop::vecString<f64>(res.bisections).c_str());
     grid.set(row, 10, std::to_string(res.cost));
 
     // get extension values from the calculator
