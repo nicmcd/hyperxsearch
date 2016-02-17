@@ -49,6 +49,8 @@ s32 main(s32 _argc, char** _argv) {
   u64 maxDimensions;
   u64 minRadix;
   u64 maxRadix;
+  u64 minConcentration;
+  u64 maxConcentration;
   u64 minTerminals;
   u64 maxTerminals;
   f64 minBandwidth;
@@ -68,38 +70,44 @@ s32 main(s32 _argc, char** _argv) {
 
     // define command line args
     TCLAP::ValueArg<u64> minDimensionsArg(
-        "e", "mindimensions", "minimum number of dimensions",
+        "", "mindimensions", "minimum number of dimensions",
         false, 1, "u64", cmd);
     TCLAP::ValueArg<u64> maxDimensionsArg(
-        "d", "maxdimensions", "maximum number of dimensions",
+        "", "maxdimensions", "maximum number of dimensions",
         false, 4, "u64", cmd);
     TCLAP::ValueArg<u64> minRadixArg(
-        "s", "minradix", "minimum router radix",
+        "", "minradix", "minimum router radix",
         false, 2, "u64", cmd);
     TCLAP::ValueArg<u64> maxRadixArg(
-        "r", "maxradix", "maximum router radix",
+        "", "maxradix", "maximum router radix",
         false, 64, "u64", cmd);
+    TCLAP::ValueArg<u64> minConcentrationArg(
+        "", "minconcentration", "minimum router concentration",
+        false, 1, "u64", cmd);
+    TCLAP::ValueArg<u64> maxConcentrationArg(
+        "", "maxconcentration", "maximum router concentration",
+        false, U32_MAX - 1, "u64", cmd);
     TCLAP::ValueArg<u64> minTerminalsArg(
-        "t", "minterminals", "minimum number of terminals",
+        "", "minterminals", "minimum number of terminals",
         false, 32768, "u64", cmd);
     TCLAP::ValueArg<u64> maxTerminalsArg(
-        "u", "maxterminals", "maximum number of terminals",
+        "", "maxterminals", "maximum number of terminals",
         false, 0, "u64", cmd);
     TCLAP::ValueArg<f64> minBandwidthArg(
-        "b", "minbandwidth", "minimum relative bisection bandwidth",
+        "", "minbandwidth", "minimum relative bisection bandwidth",
         false, 1.0, "f64", cmd);
     TCLAP::SwitchArg regularArg(
-        "f", "regular", "only search regular (fbfly) topologies",
+        "", "regular", "only search regular (fbfly) topologies",
         cmd, false);
     TCLAP::ValueArg<u64> maxResultsArg(
-        "k", "maxresults", "maximum number of results",
+        "", "maxresults", "maximum number of results",
         false, 10, "u64", cmd);
+    TCLAP::ValueArg<std::string> costCalcArg(
+        "", "costcalc", "cost calculator to use",
+        false, "router_channel_count", "string", cmd);
     TCLAP::SwitchArg printSettingsArg(
         "p", "printsettings", "print the input settings",
         cmd, false);
-    TCLAP::ValueArg<std::string> costCalcArg(
-        "c", "costcalc", "cost calculator to use",
-        false, "router_channel_count", "string", cmd);
 
     // parse the command line
     cmd.parse(_argc, _argv);
@@ -109,6 +117,8 @@ s32 main(s32 _argc, char** _argv) {
     maxDimensions = maxDimensionsArg.getValue();
     minRadix = minRadixArg.getValue();
     maxRadix = maxRadixArg.getValue();
+    minConcentration = minConcentrationArg.getValue();
+    maxConcentration = maxConcentrationArg.getValue();
     minTerminals = minTerminalsArg.getValue();
     maxTerminals = maxTerminalsArg.getValue();
     if (maxTerminals == 0) {
@@ -130,6 +140,8 @@ s32 main(s32 _argc, char** _argv) {
            "  maxDimensions = %lu\n"
            "  minRadix = %lu\n"
            "  maxRadix = %lu\n"
+           "  minConcentration = %lu\n"
+           "  maxConcentration = %lu\n"
            "  minTerminals = %lu\n"
            "  maxTerminals = %lu\n"
            "  minBandwidth = %f\n"
@@ -141,6 +153,8 @@ s32 main(s32 _argc, char** _argv) {
            maxDimensions,
            minRadix,
            maxRadix,
+           minConcentration,
+           maxConcentration,
            minTerminals,
            maxTerminals,
            minBandwidth,
@@ -154,8 +168,9 @@ s32 main(s32 _argc, char** _argv) {
 
   // create and run the engine
   topos::hyperx::Engine engine(
-      minDimensions, maxDimensions, minRadix, maxRadix, minTerminals,
-      maxTerminals, minBandwidth, regular, maxResults, calc);
+      minDimensions, maxDimensions, minRadix, maxRadix, minConcentration,
+      maxConcentration, minTerminals, maxTerminals, minBandwidth, regular,
+      maxResults, calc);
   engine.run();
 
   // gather the results
