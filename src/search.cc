@@ -215,7 +215,7 @@ s32 main(s32 _argc, char** _argv) {
     grid.set(row, 6, std::to_string(res.routers));
     grid.set(row, 7, std::to_string(res.routerRadix));
     grid.set(row, 8, std::to_string(res.channels));
-    grid.set(row, 9, strop::vecString<f64>(res.bisections).c_str());
+    grid.set(row, 9, strop::vecString<f64>(res.bisections, ',', 2).c_str());
     grid.set(row, 10, std::to_string(res.cost));
 
     // get extension values from the calculator
