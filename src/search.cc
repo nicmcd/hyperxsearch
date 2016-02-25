@@ -54,7 +54,8 @@ s32 main(s32 _argc, char** _argv) {
   u64 minTerminals;
   u64 maxTerminals;
   f64 minBandwidth;
-  bool regular;
+  bool fixedWidth;
+  bool fixedWeight;
   u64 maxResults;
   bool printSettings;
   std::string costCalc;
@@ -96,8 +97,11 @@ s32 main(s32 _argc, char** _argv) {
     TCLAP::ValueArg<f64> minBandwidthArg(
         "", "minbandwidth", "minimum relative bisection bandwidth",
         false, 1.0, "f64", cmd);
-    TCLAP::SwitchArg regularArg(
-        "", "regular", "only search regular (fbfly) topologies",
+    TCLAP::SwitchArg fixedWidthArg(
+        "", "fixedwidth", "only search fixed width (fbfly) topologies",
+        cmd, false);
+    TCLAP::SwitchArg fixedWeightArg(
+        "", "fixedweight", "only search fixed weight (fbfly) topologies",
         cmd, false);
     TCLAP::ValueArg<u64> maxResultsArg(
         "", "maxresults", "maximum number of results",
@@ -125,7 +129,8 @@ s32 main(s32 _argc, char** _argv) {
       maxTerminals = minTerminals * 2;
     }
     minBandwidth = minBandwidthArg.getValue();
-    regular = regularArg.getValue();
+    fixedWidth = fixedWidthArg.getValue();
+    fixedWeight = fixedWeightArg.getValue();
     maxResults = maxResultsArg.getValue();
     printSettings = printSettingsArg.getValue();
     costCalc = costCalcArg.getValue();
@@ -145,7 +150,8 @@ s32 main(s32 _argc, char** _argv) {
            "  minTerminals = %lu\n"
            "  maxTerminals = %lu\n"
            "  minBandwidth = %f\n"
-           "  regular = %s\n"
+           "  fixedWidth = %s\n"
+           "  fixedWeight = %s\n"
            "  maxResults = %lu\n"
            "  costCalc = %s\n"
            "\n",
@@ -158,7 +164,8 @@ s32 main(s32 _argc, char** _argv) {
            minTerminals,
            maxTerminals,
            minBandwidth,
-           (regular ? "yes" : "no"),
+           (fixedWidth ? "yes" : "no"),
+           (fixedWeight ? "yes" : "no"),
            maxResults,
            costCalc.c_str());
   }
@@ -169,8 +176,8 @@ s32 main(s32 _argc, char** _argv) {
   // create and run the engine
   topos::hyperx::Engine engine(
       minDimensions, maxDimensions, minRadix, maxRadix, minConcentration,
-      maxConcentration, minTerminals, maxTerminals, minBandwidth, regular,
-      maxResults, calc);
+      maxConcentration, minTerminals, maxTerminals, minBandwidth, fixedWidth,
+      fixedWeight, maxResults, calc);
   engine.run();
 
   // gather the results
