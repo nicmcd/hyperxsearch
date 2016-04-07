@@ -32,7 +32,6 @@
 #include <prim/prim.h>
 #include <strop/strop.h>
 #include <tclap/CmdLine.h>
-#include <topos/hyperx/Engine.h>
 
 #include <deque>
 #include <memory>
@@ -41,8 +40,9 @@
 #include <string>
 #include <vector>
 
-#include "cost/Calculator.h"
-#include "cost/CalculatorFactory.h"
+#include "search/Calculator.h"
+#include "search/CalculatorFactory.h"
+#include "search/Engine.h"
 
 s32 main(s32 _argc, char** _argv) {
   u64 minDimensions;
@@ -171,17 +171,17 @@ s32 main(s32 _argc, char** _argv) {
   }
 
   // create the cost calculator
-  calc::Calculator* calc = calc::CalculatorFactory::createCalculator(costCalc);
+  Calculator* calc = CalculatorFactory::createCalculator(costCalc);
 
   // create and run the engine
-  topos::hyperx::Engine engine(
+  Engine engine(
       minDimensions, maxDimensions, minRadix, maxRadix, minConcentration,
       maxConcentration, minTerminals, maxTerminals, minBandwidth, fixedWidth,
       fixedWeight, maxResults, calc);
   engine.run();
 
   // gather the results
-  const std::deque<topos::hyperx::Hyperx>& results = engine.results();
+  const std::deque<Hyperx>& results = engine.results();
 
   // create the output grid
   const std::vector<std::string>& extFields = calc->extFields();
@@ -210,7 +210,7 @@ s32 main(s32 _argc, char** _argv) {
     u64 row = idx + 1;
 
     // get the results
-    const topos::hyperx::Hyperx& res = results.at(idx);
+    const Hyperx& res = results.at(idx);
 
     // format the regular values in the row
     grid.set(row, 0, std::to_string(row));

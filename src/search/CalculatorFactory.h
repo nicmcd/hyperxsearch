@@ -28,33 +28,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef COST_CALCULATOR_H_
-#define COST_CALCULATOR_H_
-
-#include <prim/prim.h>
-#include <topos/hyperx/Engine.h>
+#ifndef SEARCH_CALCULATORFACTORY_H_
+#define SEARCH_CALCULATORFACTORY_H_
 
 #include <string>
-#include <unordered_map>
-#include <vector>
 
-namespace calc {
+#include "search/Calculator.h"
 
-class Calculator : public topos::hyperx::CostFunction {
+class CalculatorFactory {
  public:
-  Calculator();
-  virtual ~Calculator();
-
-  virtual const std::vector<std::string>& extFields() const;
-
-  virtual std::unordered_map<std::string, std::string> extValues(
-      const topos::hyperx::Hyperx& _hyperx) const;
-
- private:
-  static const std::vector<std::string> EMPTY_FIELDS;
-  static const std::unordered_map<std::string, std::string> EMPTY_VALUES;
+  static Calculator* createCalculator(const std::string& _type);
 };
 
-}  // namespace calc
-
-#endif  // COST_CALCULATOR_H_
+#endif  // SEARCH_CALCULATORFACTORY_H_

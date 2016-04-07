@@ -28,21 +28,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "cost/CalculatorFactory.h"
+#include "search/CalculatorFactory.h"
 
 #include <cassert>
 
-#include "cost/RouterChannelCount.h"
-
-namespace calc {
+#include "search/RouterChannelCount.h"
 
 Calculator* CalculatorFactory::createCalculator(const std::string& _type) {
   if (_type == "router_channel_count") {
-    return new calc::RouterChannelCount();
+    return new RouterChannelCount();
   } else {
     fprintf(stderr, "unknown cost calculator: %s\n", _type.c_str());
     exit(-1);
   }
 }
-
-}  // namespace calc

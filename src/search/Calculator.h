@@ -28,23 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef COST_ROUTERCHANNELCOUNT_H_
-#define COST_ROUTERCHANNELCOUNT_H_
+#ifndef SEARCH_CALCULATOR_H_
+#define SEARCH_CALCULATOR_H_
 
 #include <prim/prim.h>
-#include <topos/hyperx/Engine.h>
 
-#include "cost/Calculator.h"
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-namespace calc {
+#include "search/Engine.h"
 
-class RouterChannelCount : public Calculator {
+class Calculator : public CostFunction {
  public:
-  RouterChannelCount();
-  ~RouterChannelCount();
-  f64 cost(const topos::hyperx::Hyperx& _hyperx) const override;
+  Calculator();
+  virtual ~Calculator();
+
+  virtual const std::vector<std::string>& extFields() const;
+
+  virtual std::unordered_map<std::string, std::string> extValues(
+      const Hyperx& _hyperx) const;
+
+ private:
+  static const std::vector<std::string> EMPTY_FIELDS;
+  static const std::unordered_map<std::string, std::string> EMPTY_VALUES;
 };
 
-}  // namespace calc
-
-#endif  // COST_ROUTERCHANNELCOUNT_H_
+#endif  // SEARCH_CALCULATOR_H_

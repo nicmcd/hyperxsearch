@@ -28,20 +28,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef COST_CALCULATORFACTORY_H_
-#define COST_CALCULATORFACTORY_H_
+#include "search/RouterChannelCount.h"
 
-#include <string>
+RouterChannelCount::RouterChannelCount() {}
 
-#include "cost/Calculator.h"
+RouterChannelCount::~RouterChannelCount() {}
 
-namespace calc {
-
-class CalculatorFactory {
- public:
-  static Calculator* createCalculator(const std::string& _type);
-};
-
-}  // namespace calc
-
-#endif  // COST_CALCULATORFACTORY_H_
+f64 RouterChannelCount::cost(const Hyperx& _hyperx) const {
+  return _hyperx.routers + _hyperx.channels * 0.000000001;
+}

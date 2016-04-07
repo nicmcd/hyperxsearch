@@ -28,26 +28,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "cost/Calculator.h"
+#ifndef SEARCH_ROUTERCHANNELCOUNT_H_
+#define SEARCH_ROUTERCHANNELCOUNT_H_
 
-namespace calc {
+#include <prim/prim.h>
 
-// initial static member variables
-const std::vector<std::string> Calculator::EMPTY_FIELDS;
-const std::unordered_map<std::string, std::string> Calculator::EMPTY_VALUES;
+#include "search/Calculator.h"
+#include "search/Engine.h"
 
-Calculator::Calculator() {}
+class RouterChannelCount : public Calculator {
+ public:
+  RouterChannelCount();
+  ~RouterChannelCount();
+  f64 cost(const Hyperx& _hyperx) const override;
+};
 
-Calculator::~Calculator() {}
-
-const std::vector<std::string>& Calculator::extFields() const {
-  return EMPTY_FIELDS;
-}
-
-std::unordered_map<std::string, std::string> Calculator::extValues(
-    const topos::hyperx::Hyperx& _hyperx) const {
-  (void)_hyperx;  // unused
-  return EMPTY_VALUES;
-}
-
-}  // namespace calc
+#endif  // SEARCH_ROUTERCHANNELCOUNT_H_
