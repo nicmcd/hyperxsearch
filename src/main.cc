@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Nic McDonald
+ * Copyright (c) 2016, Nic McDonald
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@ s32 main(s32 _argc, char** _argv) {
 
   std::string version = "1.1";
   std::string description =
-      ("Search HyperX topologies for optimal solutions. Copyright (c) 2015. "
+      ("Search HyperX topologies for optimal solutions. Copyright (c) 2016. "
        "Nic McDonald. See LICENSE file for details.");
 
   try {

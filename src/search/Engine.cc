@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Nic McDonald
+ * Copyright (c) 2016, Nic McDonald
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
