@@ -96,7 +96,7 @@ s32 main(s32 _argc, char** _argv) {
         false, 0, "u64", cmd);
     TCLAP::ValueArg<f64> minBandwidthArg(
         "", "minbandwidth", "minimum relative bisection bandwidth",
-        false, 1.0, "f64", cmd);
+        false, 0.5, "f64", cmd);
     TCLAP::SwitchArg fixedWidthArg(
         "", "fixedwidth", "only search fixed width (fbfly) topologies",
         cmd, false);
