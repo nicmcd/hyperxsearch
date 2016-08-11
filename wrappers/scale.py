@@ -7,10 +7,15 @@ import taskrun
 import threading
 
 
-def getInfo(exe, maxradix, minterminals, minbandwidth, maxdimensions):
+def getInfo(exe, maxradix, minterminals, minbandwidth, maxdimensions,
+            minconcentration, maxconcentration):
   cmd = ('{0} --maxradix {1} --minterminals {2} --minbandwidth {3} '
          '--maxdimensions {4} --maxresults 1').format(
            exe, maxradix, minterminals, minbandwidth, maxdimensions)
+  if minconcentration:
+    cmd += ' --minconcentration {0}'.format(minconcentration)
+  if maxconcentration:
+    cmd += ' --maxconcentration {0}'.format(maxconcentration)
   stdout = subprocess.check_output(cmd, shell=True).decode('utf-8')
   lines = stdout.split('\n')
   if len(lines) < 3:
@@ -25,29 +30,31 @@ def getInfo(exe, maxradix, minterminals, minbandwidth, maxdimensions):
 lock = threading.Lock()
 results = {}
 
-def findLargestNetwork(exe, maxradix, minbandwidth, maxdimensions, verbose):
+def findLargestNetwork(exe, maxradix, minbandwidth, maxdimensions,
+                       minconcentration, maxconcentration, verbose):
   if verbose:
     print('exe={0} maxradix={1} minbandwidth={2} maxdimensions={3}'
-          .format(exe, maxradix, minbandwidth, maxdimensions))
+          .format(exe, maxradix, minbandwidth, maxdimensions, minconcentration,
+                  maxconcentration))
 
   terms = None
   routers = None
   channels = None
 
   bot = 2
-  top = maxradix**(args.maxdimensions+1)
+  top = maxradix**(maxdimensions+1)
 
   # verify top is unachievable
-  info = getInfo(args.hyperxsearch, maxradix, top, args.minbandwidth,
-                 args.maxdimensions)
+  info = getInfo(exe, maxradix, top, minbandwidth,
+                 maxdimensions, minconcentration, maxconcentration)
   assert info is None, 'The programmer is an idiot!'
 
   # use a binary search to find the largest network possible
   while True:
     assert bot <= top
     mid = ((top - bot) // 2) + bot
-    info = getInfo(args.hyperxsearch, maxradix, mid, args.minbandwidth,
-                   args.maxdimensions)
+    info = getInfo(exe, maxradix, mid, minbandwidth,
+                   maxdimensions, minconcentration, maxconcentration)
 
     if verbose:
       print('bot={0} top={1} mid={2} solution={3}'.format(
@@ -82,12 +89,13 @@ def main(args):
 
   rm = taskrun.ResourceManager(
     taskrun.CounterResource('cores', 1, args.cores))
-  tm = taskrun.TaskManager(resource_manager=rm, observer=None)
+  tm = taskrun.TaskManager(resource_manager=rm, observers=[])
 
   for radix in range(args.minradix, args.maxradix+1, 1):
     task = taskrun.FunctionTask(
       tm, 'radix_{0}'.format(radix), findLargestNetwork, args.hyperxsearch,
-      radix, args.minbandwidth, args.maxdimensions, args.verbose)
+      radix, args.minbandwidth, args.maxdimensions, args.minconcentration,
+      args.maxconcentration, args.verbose)
     task.priority = radix
 
   tm.run_tasks()
@@ -109,6 +117,10 @@ if __name__ == '__main__':
                   help='maximum number of dimensions')
   ap.add_argument('minbandwidth', type=float,
                   help='minimum bisection bandwidth')
+  ap.add_argument('--minconcentration', type=int, default=0,
+                  help='minimum concentration')
+  ap.add_argument('--maxconcentration', type=int, default=0,
+                  help='maximum concentration')
   ap.add_argument('-c', '--cores', type=int, default=os.cpu_count(),
                   help='number of cores to use')
   ap.add_argument('-v', '--verbose', default=False, action='store_true',
