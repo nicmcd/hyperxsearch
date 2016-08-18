@@ -54,6 +54,7 @@ s32 main(s32 _argc, char** _argv) {
   u64 minTerminals;
   u64 maxTerminals;
   f64 minBandwidth;
+  f64 maxBandwidth;
   bool fixedWidth;
   bool fixedWeight;
   u64 maxResults;
@@ -97,6 +98,9 @@ s32 main(s32 _argc, char** _argv) {
     TCLAP::ValueArg<f64> minBandwidthArg(
         "", "minbandwidth", "minimum relative bisection bandwidth",
         false, 0.5, "f64", cmd);
+    TCLAP::ValueArg<f64> maxBandwidthArg(
+        "", "maxbandwidth", "maximum relative bisection bandwidth",
+        false, F64_POS_INF, "f64", cmd);
     TCLAP::SwitchArg fixedWidthArg(
         "", "fixedwidth", "only search fixed width (fbfly) topologies",
         cmd, false);
@@ -129,6 +133,7 @@ s32 main(s32 _argc, char** _argv) {
       maxTerminals = minTerminals * 2;
     }
     minBandwidth = minBandwidthArg.getValue();
+    maxBandwidth = maxBandwidthArg.getValue();
     fixedWidth = fixedWidthArg.getValue();
     fixedWeight = fixedWeightArg.getValue();
     maxResults = maxResultsArg.getValue();
@@ -150,6 +155,7 @@ s32 main(s32 _argc, char** _argv) {
            "  minTerminals = %lu\n"
            "  maxTerminals = %lu\n"
            "  minBandwidth = %f\n"
+           "  maxBandwidth = %f\n"
            "  fixedWidth = %s\n"
            "  fixedWeight = %s\n"
            "  maxResults = %lu\n"
@@ -164,6 +170,7 @@ s32 main(s32 _argc, char** _argv) {
            minTerminals,
            maxTerminals,
            minBandwidth,
+           maxBandwidth,
            (fixedWidth ? "yes" : "no"),
            (fixedWeight ? "yes" : "no"),
            maxResults,
@@ -176,8 +183,8 @@ s32 main(s32 _argc, char** _argv) {
   // create and run the engine
   Engine engine(
       minDimensions, maxDimensions, minRadix, maxRadix, minConcentration,
-      maxConcentration, minTerminals, maxTerminals, minBandwidth, fixedWidth,
-      fixedWeight, maxResults, calc);
+      maxConcentration, minTerminals, maxTerminals, minBandwidth, maxBandwidth,
+      fixedWidth, fixedWeight, maxResults, calc);
   engine.run();
 
   // gather the results

@@ -49,8 +49,8 @@ bool Comparator::operator()(const Hyperx& _lhs, const Hyperx& _rhs) const {
 Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
                u64 _maxRadix, u64 _minConcentration, u64 _maxConcentration,
                u64 _minTerminals, u64 _maxTerminals, f64 _minBandwidth,
-               bool _fixedWidth, bool _fixedWeight, u64 _maxResults,
-               const CostFunction* _costFunction)
+               f64 _maxBandwidth, bool _fixedWidth, bool _fixedWeight,
+               u64 _maxResults, const CostFunction* _costFunction)
     : minDimensions_(_minDimensions),
       maxDimensions_(_maxDimensions),
       minRadix_(_minRadix),
@@ -60,6 +60,7 @@ Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
       minTerminals_(_minTerminals),
       maxTerminals_(_maxTerminals),
       minBandwidth_(_minBandwidth),
+      maxBandwidth_(_maxBandwidth),
       fixedWidth_(_fixedWidth),
       fixedWeight_(_fixedWeight),
       maxResults_(_maxResults),
@@ -85,6 +86,9 @@ Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
                              "minterminals");
   } else if (minBandwidth_ <= 0) {
     throw std::runtime_error("minbandwidth must be greater than 0.0");
+  } else if (maxBandwidth_ < minBandwidth_) {
+    throw std::runtime_error("maxbandwidth must be greater than or equal to "
+                             "minbandwidth");
   }
 }
 
@@ -283,16 +287,21 @@ void Engine::stage3() {
 
     // if not already skipped, compute bisection bandwidth
     bool tooSmallBandwidth = false;
+    bool tooBigBandwidth = false;
     if (!tooSmallRadix && !tooBigRadix) {
       hyperx_.bisections.clear();
       hyperx_.bisections.resize(hyperx_.dimensions, 0.0);
-      f64 smallestBandwidth = 9999999999;
+      f64 smallestBandwidth = F64_POS_INF;
+      f64 largestBandwidth = F64_NEG_INF;
       for (u64 dim = 0; dim < hyperx_.dimensions; dim++) {
         hyperx_.bisections.at(dim) =
             (hyperx_.widths.at(dim) * hyperx_.weights.at(dim)) /
             (2.0 * hyperx_.concentration);
         if (hyperx_.bisections.at(dim) < smallestBandwidth) {
           smallestBandwidth = hyperx_.bisections.at(dim);
+        }
+        if (hyperx_.bisections.at(dim) > largestBandwidth) {
+          largestBandwidth = hyperx_.bisections.at(dim);
         }
       }
       if (smallestBandwidth < minBandwidth_) {
@@ -305,11 +314,22 @@ void Engine::stage3() {
                  hyperx_.routerRadix,
                  strop::vecString<f64>(hyperx_.bisections).c_str());
         }
+      } else if (largestBandwidth > maxBandwidth_) {
+        tooBigBandwidth = true;
+        if (HSE_DEBUG >= 7) {
+          printf("3s: SKIPPING S=%s T=%lu N=%lu P=%lu K=%s R=%lu B=%s\n",
+                 strop::vecString<u64>(hyperx_.widths).c_str(),
+                 hyperx_.concentration, hyperx_.terminals, hyperx_.routers,
+                 strop::vecString<u64>(hyperx_.weights).c_str(),
+                 hyperx_.routerRadix,
+                 strop::vecString<f64>(hyperx_.bisections).c_str());
+        }
       }
     }
 
     // if passed all tests, send to next stage
-    if (!tooSmallRadix && !tooBigRadix && !tooSmallBandwidth) {
+    if (!tooSmallRadix && !tooBigBandwidth &&
+        !tooBigRadix && !tooSmallBandwidth) {
       stage4();
     }
 
