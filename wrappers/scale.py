@@ -24,7 +24,8 @@ def getInfo(exe, maxradix, minterminals, minbandwidth, maxdimensions,
     best = lines[1].split()
     routers = float(best[6])
     channels = float(best[8])
-    return routers, channels
+    terminals = float(best[5])
+    return routers, channels, terminals
 
 
 lock = threading.Lock()
@@ -62,8 +63,7 @@ def findLargestNetwork(exe, maxradix, minbandwidth, maxdimensions,
 
     if bot == mid:
       assert info is not None
-      terms = mid
-      routers, channels = info
+      routers, channels, terms = info
       break
 
     if info is None:
