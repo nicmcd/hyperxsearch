@@ -53,7 +53,11 @@ def findLargestNetwork(exe, maxradix, minbandwidth, mindimensions,
         bot, top, mid, False if info is None else True))
 
     if bot == mid:
-      assert info is not None
+      if info is None:
+        print("ERROR: {0} returned no info.\n"
+              " You likely asked for something that is not possible"
+              .format(exe))
+        assert False
       best = info
       break
 
