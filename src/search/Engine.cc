@@ -49,8 +49,9 @@ bool Comparator::operator()(const Hyperx& _lhs, const Hyperx& _rhs) const {
 Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
                u64 _maxRadix, u64 _minConcentration, u64 _maxConcentration,
                u64 _minTerminals, u64 _maxTerminals, f64 _minBandwidth,
-               f64 _maxBandwidth, bool _fixedWidth, bool _fixedWeight,
-               u64 _maxResults, const CostFunction* _costFunction)
+               f64 _maxBandwidth, u64 _maxWidth, bool _fixedWidth,
+               bool _fixedWeight, u64 _maxResults,
+               const CostFunction* _costFunction)
     : minDimensions_(_minDimensions),
       maxDimensions_(_maxDimensions),
       minRadix_(_minRadix),
@@ -61,6 +62,7 @@ Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
       maxTerminals_(_maxTerminals),
       minBandwidth_(_minBandwidth),
       maxBandwidth_(_maxBandwidth),
+      maxWidth_(_maxWidth),
       fixedWidth_(_fixedWidth),
       fixedWeight_(_fixedWeight),
       maxResults_(_maxResults),
@@ -89,6 +91,8 @@ Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
   } else if (maxBandwidth_ < minBandwidth_) {
     throw std::runtime_error("maxbandwidth must be greater than or equal to "
                              "minbandwidth");
+  } else if (maxWidth_ <= 1) {
+    throw std::runtime_error("maxwidth must be greater than 1");
   }
 }
 
@@ -121,6 +125,7 @@ void Engine::stage1() {
       // FbFly
       maxWidth = ((maxRadix_ - 1) / hyperx_.dimensions) + 1;
     }
+    maxWidth = std::min(maxWidth, maxWidth_);
 
     if (maxWidth < 2) {
       break;
@@ -204,7 +209,7 @@ void Engine::stage2() {
 
   // compute the baseRadix (no terminals)
   u64 baseRadix = 0;
-  for (u64 dim = 1; dim < hyperx_.dimensions; dim++) {
+  for (u64 dim = 0; dim < hyperx_.dimensions; dim++) {
     baseRadix += hyperx_.widths.at(dim) - 1;
   }
 
@@ -242,7 +247,7 @@ void Engine::stage3() {
 
   // find the base radix
   u64 baseRadix = hyperx_.concentration;
-  for (u64 dim = 1; dim < hyperx_.dimensions; dim++) {
+  for (u64 dim = 0; dim < hyperx_.dimensions; dim++) {
     baseRadix += hyperx_.widths.at(dim) - 1;
   }
   u64 deltaRadix = maxRadix_ - baseRadix;
@@ -258,6 +263,11 @@ void Engine::stage3() {
     if (maxWeights.at(dim) > maxWeight) {
       maxWeight = maxWeights.at(dim);
     }
+  }
+  if (HSE_DEBUG >= 4) {
+    printf("3: baseRadix=%lu deltaRadix=%lu, maxWeight=%lu maxWeights=%s\n",
+           baseRadix, deltaRadix, maxWeight,
+           strop::vecString<u64>(maxWeights).c_str());
   }
 
   // try finding acceptable weights
@@ -338,7 +348,6 @@ void Engine::stage3() {
     if ((tooBigRadix) && (ldim == (hyperx_.dimensions - 1))) {
       break;
     }
-
     // find the next weights configuration
     if (!fixedWeight_) {
       // HyperX
@@ -350,9 +359,12 @@ void Engine::stage3() {
           break;
         }
       }
+      if (ndim == hyperx_.dimensions) {
+        break;
+      }
       hyperx_.weights.at(ndim)++;
       ldim = ndim;
-      for (u64 d = 0; ndim != 0 && d < ndim - 1; d++) {
+      for (u64 d = 0; ndim != 0 && d < ndim; d++) {
         hyperx_.weights.at(d) = hyperx_.weights.at(ndim);
       }
     } else {

@@ -55,6 +55,7 @@ s32 main(s32 _argc, char** _argv) {
   u64 maxTerminals;
   f64 minBandwidth;
   f64 maxBandwidth;
+  u64 maxWidth;
   bool fixedWidth;
   bool fixedWeight;
   u64 maxResults;
@@ -101,6 +102,9 @@ s32 main(s32 _argc, char** _argv) {
     TCLAP::ValueArg<f64> maxBandwidthArg(
         "", "maxbandwidth", "maximum relative bisection bandwidth",
         false, F64_POS_INF, "f64", cmd);
+    TCLAP::ValueArg<u64> maxWidthArg(
+        "", "maxwidth", "maximum width of any dimension",
+        false, U32_MAX - 1, "u64", cmd);
     TCLAP::SwitchArg fixedWidthArg(
         "", "fixedwidth", "only search fixed width (fbfly) topologies",
         cmd, false);
@@ -134,6 +138,7 @@ s32 main(s32 _argc, char** _argv) {
     }
     minBandwidth = minBandwidthArg.getValue();
     maxBandwidth = maxBandwidthArg.getValue();
+    maxWidth = maxWidthArg.getValue();
     fixedWidth = fixedWidthArg.getValue();
     fixedWeight = fixedWeightArg.getValue();
     maxResults = maxResultsArg.getValue();
@@ -156,6 +161,7 @@ s32 main(s32 _argc, char** _argv) {
            "  maxTerminals = %lu\n"
            "  minBandwidth = %f\n"
            "  maxBandwidth = %f\n"
+           "  maxWidth = %lu\n"
            "  fixedWidth = %s\n"
            "  fixedWeight = %s\n"
            "  maxResults = %lu\n"
@@ -171,6 +177,7 @@ s32 main(s32 _argc, char** _argv) {
            maxTerminals,
            minBandwidth,
            maxBandwidth,
+           maxWidth,
            (fixedWidth ? "yes" : "no"),
            (fixedWeight ? "yes" : "no"),
            maxResults,
@@ -184,7 +191,7 @@ s32 main(s32 _argc, char** _argv) {
   Engine engine(
       minDimensions, maxDimensions, minRadix, maxRadix, minConcentration,
       maxConcentration, minTerminals, maxTerminals, minBandwidth, maxBandwidth,
-      fixedWidth, fixedWeight, maxResults, calc);
+      maxWidth, fixedWidth, fixedWeight, maxResults, calc);
   engine.run();
 
   // gather the results
