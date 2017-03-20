@@ -66,7 +66,7 @@ class Engine {
   Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix, u64 _maxRadix,
          u64 _minConcentration, u64 _maxConcentration, u64 _minTerminals,
          u64 _maxTerminals, f64 _minBandwidth, f64 _maxBandwidth, u64 _maxWidth,
-         bool _fixedWidth, bool _fixedWeight, u64 _maxResults,
+         u64 _maxWeight, bool _fixedWidth, bool _fixedWeight, u64 _maxResults,
          const CostFunction* _costFunction);
   ~Engine();
 
@@ -85,6 +85,7 @@ class Engine {
   f64 minBandwidth_;
   f64 maxBandwidth_;
   u64 maxWidth_;
+  u64 maxWeight_;
   bool fixedWidth_;
   bool fixedWeight_;
   u64 maxResults_;

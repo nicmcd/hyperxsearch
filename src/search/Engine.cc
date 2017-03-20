@@ -49,8 +49,8 @@ bool Comparator::operator()(const Hyperx& _lhs, const Hyperx& _rhs) const {
 Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
                u64 _maxRadix, u64 _minConcentration, u64 _maxConcentration,
                u64 _minTerminals, u64 _maxTerminals, f64 _minBandwidth,
-               f64 _maxBandwidth, u64 _maxWidth, bool _fixedWidth,
-               bool _fixedWeight, u64 _maxResults,
+               f64 _maxBandwidth, u64 _maxWidth, u64 _maxWeight,
+               bool _fixedWidth, bool _fixedWeight, u64 _maxResults,
                const CostFunction* _costFunction)
     : minDimensions_(_minDimensions),
       maxDimensions_(_maxDimensions),
@@ -63,6 +63,7 @@ Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
       minBandwidth_(_minBandwidth),
       maxBandwidth_(_maxBandwidth),
       maxWidth_(_maxWidth),
+      maxWeight_(_maxWeight),
       fixedWidth_(_fixedWidth),
       fixedWeight_(_fixedWeight),
       maxResults_(_maxResults),
@@ -93,6 +94,8 @@ Engine::Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix,
                              "minbandwidth");
   } else if (maxWidth_ <= 1) {
     throw std::runtime_error("maxwidth must be greater than 1");
+  } else if (maxWeight_ < 1) {
+    throw std::runtime_error("maxweight must be greater than 0");
   }
 }
 
@@ -253,21 +256,16 @@ void Engine::stage3() {
   u64 deltaRadix = maxRadix_ - baseRadix;
 
   // find the amount of weighting that is within maximum bounds
-  std::vector<u64> maxWeights(hyperx_.dimensions, 2);  // minimize to 2
-  u64 maxWeight = 0;
+  std::vector<u64> maxWeights(hyperx_.dimensions, 1);
   for (u64 dim = 0; dim < hyperx_.dimensions; dim++) {
     u64 m = 1 + (deltaRadix / (hyperx_.widths.at(dim) - 1));
     if (m > maxWeights.at(dim)) {
-      maxWeights.at(dim) = m;
-    }
-    if (maxWeights.at(dim) > maxWeight) {
-      maxWeight = maxWeights.at(dim);
+      maxWeights.at(dim) = std::min(maxWeight_, m);
     }
   }
   if (HSE_DEBUG >= 4) {
-    printf("3: baseRadix=%lu deltaRadix=%lu, maxWeight=%lu maxWeights=%s\n",
-           baseRadix, deltaRadix, maxWeight,
-           strop::vecString<u64>(maxWeights).c_str());
+    printf("3: baseRadix=%lu deltaRadix=%lu, maxWeights=%s\n",
+           baseRadix, deltaRadix, strop::vecString<u64>(maxWeights).c_str());
   }
 
   // try finding acceptable weights
