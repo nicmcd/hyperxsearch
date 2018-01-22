@@ -39,7 +39,6 @@ def main(args):
       tm, 'radix_{0}'.format(radix), largestNetwork,
       args.hyperxsearch, radix, args.minbandwidth, None, args.maxdimensions,
       args.minconcentration, args.maxconcentration, lock, results, args.verbose)
-    task.priority = radix
 
   tm.run_tasks()
 
