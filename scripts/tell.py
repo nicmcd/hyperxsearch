@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
-import taskrun
-import threading
 
 def tri(width):
   return (width * (width - 1)) // 2
@@ -101,9 +98,6 @@ def main(args):
 
 
 if __name__ == '__main__':
-  # sample:
-  # ./wrappers/tell.py bin/hyperxsearch 23,16 1,1 16
-
   ap = argparse.ArgumentParser()
   ap.add_argument('widths', type=str,
                   help='dimension widths')
