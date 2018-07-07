@@ -33,6 +33,7 @@ def main(args):
       if idx != idx2:
         dimChannels *= args.widths[idx2]
     channels.append(dimChannels)
+  total_channels = sum(channels)
 
   # get strings of everything
   dims_label = 'Dimensions'
@@ -51,11 +52,15 @@ def main(args):
   radix_value = str(radix)
   channels_label = 'Channels'
   channels_value = '[' + ','.join([str(c) for c in channels]) + ']'
+  total_channels_label = 'TotalChannels'
+  total_channels_value = str(total_channels)
   bisec_label = 'Bisections'
-  bisec_value = '[' + ','.join(['{0:.5f}'.format(b) for b in bisecs]) + ']'
+  bisec_value = '[' + ','.join(['{0:.02f}%'.format(b * 100)
+                                for b in bisecs]) + ']'
 
   # print info
-  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} {16}{17}'
+  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} '
+        '{16}{17} {18}{19}'
         .format(
           dims_label,
           gap(dims_label, dims_value),
@@ -73,9 +78,12 @@ def main(args):
           gap(radix_label, radix_value),
           channels_label,
           gap(channels_label, channels_value),
+          total_channels_label,
+          gap(total_channels_label, total_channels_value),
           bisec_label,
           gap(bisec_label, bisec_value)))
-  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} {16}{17}'
+  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} '
+        '{16}{17} {18}{19}'
         .format(
           dims_value,
           gap(dims_value, dims_label),
@@ -93,9 +101,10 @@ def main(args):
           gap(radix_value, radix_label),
           channels_value,
           gap(channels_value, channels_label),
+          total_channels_value,
+          gap(total_channels_value, total_channels_label),
           bisec_value,
           gap(bisec_value, bisec_label)))
-
 
 if __name__ == '__main__':
   ap = argparse.ArgumentParser()
@@ -109,8 +118,8 @@ if __name__ == '__main__':
                   help='turn on verbose output')
   args = ap.parse_args()
 
-  args.widths = [int(x) for x in args.widths.split(',')]
-  args.weights = [int(x) for x in args.weights.split(',')]
+  args.widths = [int(x) for x in args.widths.split('x')]
+  args.weights = [int(x) for x in args.weights.split('x')]
 
   for width in args.widths:
     assert width > 1

@@ -29,6 +29,7 @@ def main(args):
   channels = [terms,
               args.global_width * tri(args.local_width) * args.local_weight,
               tri(args.global_width) * args.global_weight]
+  total_channels = sum(channels)
 
   # get strings of everything
   gwidth_label = 'GlobalWidth'
@@ -49,11 +50,15 @@ def main(args):
   radix_value = str(radix)
   channels_label = 'Channels'
   channels_value = '[' + ','.join([str(c) for c in channels]) + ']'
+  total_channels_label = 'TotalChannels'
+  total_channels_value = str(total_channels)
   bisec_label = 'Bisections'
-  bisec_value = '[' + ','.join(['{0:.5f}'.format(b) for b in bisecs]) + ']'
+  bisec_value = '[' + ','.join(['{0:.02f}%'.format(b * 100)
+                                for b in bisecs]) + ']'
 
   # print info
-  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} {16}{17} {18}{19}'
+  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} '
+        '{16}{17} {18}{19} {20}{21}'
         .format(
           gwidth_label,
           gap(gwidth_label, gwidth_value),
@@ -73,9 +78,12 @@ def main(args):
           gap(radix_label, radix_value),
           channels_label,
           gap(channels_label, channels_value),
+          total_channels_label,
+          gap(total_channels_label, total_channels_value),
           bisec_label,
           gap(bisec_label, bisec_value)))
-  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} {16}{17} {18}{19}'
+  print('{0}{1} {2}{3} {4}{5} {6}{7} {8}{9} {10}{11} {12}{13} {14}{15} '
+        '{16}{17} {18}{19} {20}{21}'
         .format(
           gwidth_value,
           gap(gwidth_value, gwidth_label),
@@ -95,6 +103,8 @@ def main(args):
           gap(radix_value, radix_label),
           channels_value,
           gap(channels_value, channels_label),
+          total_channels_value,
+          gap(total_channels_value, total_channels_label),
           bisec_value,
           gap(bisec_value, bisec_label)))
 
