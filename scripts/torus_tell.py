@@ -23,8 +23,8 @@ def main(args):
   channels = [terms]
   for idx in range(len(args.widths)):
     radix += (2 * args.weights[idx])
-    bisecs[idx] = ((2 * args.weights[idx]) /
-                   (2 * args.concentration))
+    bisecs[idx] = ((2 * 2 * args.weights[idx]) /
+                   (args.widths[idx] * args.concentration))
     dimChannels = args.widths[idx] * args.weights[idx]
     for idx2 in range(len(args.widths)):
       if idx != idx2:
