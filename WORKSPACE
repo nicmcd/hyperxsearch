@@ -33,7 +33,7 @@ http_archive(
   build_file = "@tclap_build//file:downloaded",
 )
 
-hash = "9a9c5f7"
+hash = "7257aa6"
 http_archive(
   name = "libprim",
   urls = ["https://github.com/nicmcd/libprim/tarball/" + hash],
@@ -41,7 +41,7 @@ http_archive(
   strip_prefix = "nicmcd-libprim-" + hash,
 )
 
-hash = "574b010"
+hash = "5cf3ada"
 http_archive(
   name = "libstrop",
   urls = ["https://github.com/nicmcd/libstrop/tarball/" + hash],
@@ -49,7 +49,7 @@ http_archive(
   strip_prefix = "nicmcd-libstrop-" + hash,
 )
 
-hash = "2acab36"
+hash = "8215c32"
 http_archive(
   name = "libgrid",
   urls = ["https://github.com/nicmcd/libgrid/tarball/" + hash],

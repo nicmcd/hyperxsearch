@@ -18,10 +18,10 @@ COPTS = [
 ]
 
 LIBS = [
-  "@libprim//:lib",
-  "@libstrop//:lib",
-  "@libgrid//:lib",
-  "@tclap//:lib",
+  "@libprim//:prim",
+  "@libstrop//:strop",
+  "@libgrid//:grid",
+  "@tclap//:tclap",
 ]
 
 cc_library(
@@ -50,7 +50,7 @@ cc_library(
 )
 
 cc_binary(
-  name = "bin",
+  name = "hyperxsearch",
   srcs = ["src/main.cc"],
   includes = [
     "src",
@@ -82,7 +82,7 @@ cc_library(
 )
 
 cc_test(
-  name = "test",
+  name = "hyperxsearch_test",
   copts = COPTS,
   deps = [
     ":test_lib",
