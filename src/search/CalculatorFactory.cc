@@ -39,6 +39,6 @@ Calculator* CalculatorFactory::createCalculator(const std::string& _type) {
     return new RouterChannelCount();
   } else {
     fprintf(stderr, "unknown cost calculator: %s\n", _type.c_str());
-    exit(-1);
+    assert(false);
   }
 }
