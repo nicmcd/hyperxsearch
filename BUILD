@@ -41,8 +41,8 @@ cc_library(
     alwayslink = 1,
 )
 
-cc_binary(
-    name = "hyperxsearch",
+cc_library(
+    name = "main",
     srcs = ["src/main.cc"],
     copts = COPTS,
     includes = [
@@ -51,6 +51,18 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         ":lib",
+    ] + LIBS,
+)
+
+cc_binary(
+    name = "hyperxsearch",
+    copts = COPTS,
+    includes = [
+        "src",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":main",
     ] + LIBS,
 )
 
