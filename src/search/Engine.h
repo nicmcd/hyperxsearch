@@ -31,19 +31,19 @@
 #ifndef SEARCH_ENGINE_H_
 #define SEARCH_ENGINE_H_
 
-#include <prim/prim.h>
-
 #include <deque>
 #include <vector>
 
+#include "prim/prim.h"
+
 struct Hyperx {
-  u64 dimensions;  // L
-  std::vector<u64> widths;  // S
-  u64 routers;  // P
-  u64 concentration;  // T
-  u64 terminals;  // N
-  std::vector<u64> weights;  // K
-  u64 routerRadix;  // R
+  u64 dimensions;               // L
+  std::vector<u64> widths;      // S
+  u64 routers;                  // P
+  u64 concentration;            // T
+  u64 terminals;                // N
+  std::vector<u64> weights;     // K
+  u64 router_radix;             // R
   std::vector<f64> bisections;  // B
   u64 channels;
   f64 cost;
@@ -63,33 +63,34 @@ class Comparator {
 
 class Engine {
  public:
-  Engine(u64 _minDimensions, u64 _maxDimensions, u64 _minRadix, u64 _maxRadix,
-         u64 _minConcentration, u64 _maxConcentration, u64 _minTerminals,
-         u64 _maxTerminals, f64 _minBandwidth, f64 _maxBandwidth, u64 _maxWidth,
-         u64 _maxWeight, bool _fixedWidth, bool _fixedWeight, u64 _maxResults,
-         const CostFunction* _costFunction);
+  Engine(u64 _min_dimensions, u64 _max_dimensions, u64 _min_radix,
+         u64 _max_radix, u64 _min_Concentration, u64 _max_concentration,
+         u64 _min_terminals, u64 _max_Terminals, f64 _min_bandwidth,
+         f64 _max_bandwidth, u64 _max_width, u64 _max_weight, bool _fixed_width,
+         bool _fixed_weight, u64 _max_results,
+         const CostFunction* _cost_function);
   ~Engine();
 
   void run();
   const std::deque<Hyperx>& results() const;
 
  private:
-  u64 minDimensions_;
-  u64 maxDimensions_;
-  u64 minRadix_;
-  u64 maxRadix_;
-  u64 minConcentration_;
-  u64 maxConcentration_;
-  u64 minTerminals_;
-  u64 maxTerminals_;
-  f64 minBandwidth_;
-  f64 maxBandwidth_;
-  u64 maxWidth_;
-  u64 maxWeight_;
-  bool fixedWidth_;
-  bool fixedWeight_;
-  u64 maxResults_;
-  const CostFunction* costFunction_;
+  u64 min_dimensions_;
+  u64 max_dimensions_;
+  u64 min_radix_;
+  u64 max_radix_;
+  u64 min_concentration_;
+  u64 max_concentration_;
+  u64 min_terminals_;
+  u64 max_terminals_;
+  f64 min_bandwidth_;
+  f64 max_bandwidth_;
+  u64 max_width_;
+  u64 max_weight_;
+  bool fixed_width_;
+  bool fixed_weight_;
+  u64 max_results_;
+  const CostFunction* cost_function_;
   Comparator comparator_;
   Hyperx hyperx_;
   std::deque<Hyperx> results_;

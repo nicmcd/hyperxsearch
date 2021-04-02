@@ -31,19 +31,18 @@
 #include "search/Calculator.h"
 
 // initial static member variables
-const std::vector<std::string> Calculator::EMPTY_FIELDS;
-const std::unordered_map<std::string, std::string> Calculator::EMPTY_VALUES;
+const std::vector<std::string> Calculator::kEmptyFields;
+const std::unordered_map<std::string, std::string> Calculator::kEmptyValues;
 
 Calculator::Calculator() {}
 
 Calculator::~Calculator() {}
 
 const std::vector<std::string>& Calculator::extFields() const {
-  return EMPTY_FIELDS;
+  return kEmptyFields;
 }
 
 std::unordered_map<std::string, std::string> Calculator::extValues(
-    const Hyperx& _hyperx) const {
-  (void)_hyperx;  // unused
-  return EMPTY_VALUES;
+    const Hyperx& /*_hyperx*/) const {
+  return kEmptyValues;
 }

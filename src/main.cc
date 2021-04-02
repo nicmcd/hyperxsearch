@@ -28,11 +28,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <grid/Grid.h>
-#include <prim/prim.h>
-#include <strop/strop.h>
-#include <tclap/CmdLine.h>
-
 #include <deque>
 #include <memory>
 #include <sstream>
@@ -40,28 +35,32 @@
 #include <string>
 #include <vector>
 
+#include "grid/Grid.h"
+#include "prim/prim.h"
 #include "search/Calculator.h"
 #include "search/CalculatorFactory.h"
 #include "search/Engine.h"
+#include "strop/strop.h"
+#include "tclap/CmdLine.h"
 
 s32 main(s32 _argc, char** _argv) {
-  u64 minDimensions;
-  u64 maxDimensions;
-  u64 minRadix;
-  u64 maxRadix;
-  u64 minConcentration;
-  u64 maxConcentration;
-  u64 minTerminals;
-  u64 maxTerminals;
-  f64 minBandwidth;
-  f64 maxBandwidth;
-  u64 maxWidth;
-  u64 maxWeight;
-  bool fixedWidth;
-  bool fixedWeight;
-  u64 maxResults;
-  bool printSettings;
-  std::string costCalc;
+  u64 min_dimensions;
+  u64 max_dimensions;
+  u64 min_radix;
+  u64 max_radix;
+  u64 min_concentration;
+  u64 max_concentration;
+  u64 min_terminals;
+  u64 max_terminals;
+  f64 min_bandwidth;
+  f64 max_bandwidth;
+  u64 max_width;
+  u64 max_weight;
+  bool fixed_width;
+  bool fixed_weight;
+  u64 max_results;
+  bool print_settings;
+  std::string cost_calc;
 
   std::string version = "1.1";
   std::string description =
@@ -73,140 +72,125 @@ s32 main(s32 _argc, char** _argv) {
     TCLAP::CmdLine cmd(description, ' ', version);
 
     // define command line args
-    TCLAP::ValueArg<u64> minDimensionsArg(
-        "", "mindimensions", "minimum number of dimensions",
-        false, 1, "u64", cmd);
-    TCLAP::ValueArg<u64> maxDimensionsArg(
-        "", "maxdimensions", "maximum number of dimensions",
-        false, 4, "u64", cmd);
-    TCLAP::ValueArg<u64> minRadixArg(
-        "", "minradix", "minimum router radix",
-        false, 2, "u64", cmd);
-    TCLAP::ValueArg<u64> maxRadixArg(
-        "", "maxradix", "maximum router radix",
-        false, 64, "u64", cmd);
-    TCLAP::ValueArg<u64> minConcentrationArg(
-        "", "minconcentration", "minimum router concentration",
-        false, 1, "u64", cmd);
-    TCLAP::ValueArg<u64> maxConcentrationArg(
-        "", "maxconcentration", "maximum router concentration",
-        false, U32_MAX - 1, "u64", cmd);
-    TCLAP::ValueArg<u64> minTerminalsArg(
-        "", "minterminals", "minimum number of terminals",
-        false, 32768, "u64", cmd);
-    TCLAP::ValueArg<u64> maxTerminalsArg(
-        "", "maxterminals", "maximum number of terminals",
-        false, 0, "u64", cmd);
-    TCLAP::ValueArg<f64> minBandwidthArg(
-        "", "minbandwidth", "minimum relative bisection bandwidth",
-        false, 0.5, "f64", cmd);
-    TCLAP::ValueArg<f64> maxBandwidthArg(
-        "", "maxbandwidth", "maximum relative bisection bandwidth",
-        false, F64_POS_INF, "f64", cmd);
-    TCLAP::ValueArg<u64> maxWidthArg(
-        "", "maxwidth", "maximum width of any dimension",
-        false, U32_MAX - 1, "u64", cmd);
-    TCLAP::ValueArg<u64> maxWeightArg(
-        "", "maxweight", "maximum weight of any dimension",
-        false, U32_MAX - 1, "u64", cmd);
-    TCLAP::SwitchArg fixedWidthArg(
-        "", "fixedwidth", "only search fixed width (fbfly) topologies",
-        cmd, false);
-    TCLAP::SwitchArg fixedWeightArg(
-        "", "fixedweight", "only search fixed weight (fbfly) topologies",
-        cmd, false);
-    TCLAP::ValueArg<u64> maxResultsArg(
-        "", "maxresults", "maximum number of results",
-        false, 10, "u64", cmd);
-    TCLAP::ValueArg<std::string> costCalcArg(
-        "", "costcalc", "cost calculator to use",
-        false, "router_channel_count", "string", cmd);
-    TCLAP::SwitchArg printSettingsArg(
-        "p", "printsettings", "print the input settings",
-        cmd, false);
+    TCLAP::ValueArg<u64> min_dimensions_arg("", "mindimensions",
+                                            "minimum number of dimensions",
+                                            false, 1, "u64", cmd);
+    TCLAP::ValueArg<u64> max_dimensions_arg("", "maxdimensions",
+                                            "maximum number of dimensions",
+                                            false, 4, "u64", cmd);
+    TCLAP::ValueArg<u64> min_radix_arg("", "minradix", "minimum router radix",
+                                       false, 2, "u64", cmd);
+    TCLAP::ValueArg<u64> max_radix_arg("", "maxradix", "maximum router radix",
+                                       false, 64, "u64", cmd);
+    TCLAP::ValueArg<u64> min_concentration_arg("", "minconcentration",
+                                               "minimum router concentration",
+                                               false, 1, "u64", cmd);
+    TCLAP::ValueArg<u64> max_concentration_arg("", "maxconcentration",
+                                               "maximum router concentration",
+                                               false, U32_MAX - 1, "u64", cmd);
+    TCLAP::ValueArg<u64> min_terminals_arg("", "minterminals",
+                                           "minimum number of terminals", false,
+                                           32768, "u64", cmd);
+    TCLAP::ValueArg<u64> max_terminals_arg("", "maxterminals",
+                                           "maximum number of terminals", false,
+                                           0, "u64", cmd);
+    TCLAP::ValueArg<f64> min_bandwidth_arg(
+        "", "minbandwidth", "minimum relative bisection bandwidth", false, 0.5,
+        "f64", cmd);
+    TCLAP::ValueArg<f64> max_bandwidth_arg(
+        "", "maxbandwidth", "maximum relative bisection bandwidth", false,
+        F64_POS_INF, "f64", cmd);
+    TCLAP::ValueArg<u64> max_width_arg("", "maxwidth",
+                                       "maximum width of any dimension", false,
+                                       U32_MAX - 1, "u64", cmd);
+    TCLAP::ValueArg<u64> max_weight_arg("", "maxweight",
+                                        "maximum weight of any dimension",
+                                        false, U32_MAX - 1, "u64", cmd);
+    TCLAP::SwitchArg fixed_width_arg(
+        "", "fixedwidth", "only search fixed width (fbfly) topologies", cmd,
+        false);
+    TCLAP::SwitchArg fixed_weight_arg(
+        "", "fixedweight", "only search fixed weight (fbfly) topologies", cmd,
+        false);
+    TCLAP::ValueArg<u64> max_results_arg(
+        "", "maxresults", "maximum number of results", false, 10, "u64", cmd);
+    TCLAP::ValueArg<std::string> cost_calc_arg(
+        "", "costcalc", "cost calculator to use", false, "router_channel_count",
+        "string", cmd);
+    TCLAP::SwitchArg print_settings_arg("p", "printsettings",
+                                        "print the input settings", cmd, false);
 
     // parse the command line
     cmd.parse(_argc, _argv);
 
     // copy values out to variables
-    minDimensions = minDimensionsArg.getValue();
-    maxDimensions = maxDimensionsArg.getValue();
-    minRadix = minRadixArg.getValue();
-    maxRadix = maxRadixArg.getValue();
-    minConcentration = minConcentrationArg.getValue();
-    maxConcentration = maxConcentrationArg.getValue();
-    minTerminals = minTerminalsArg.getValue();
-    maxTerminals = maxTerminalsArg.getValue();
-    if (maxTerminals == 0) {
-      maxTerminals = minTerminals * 2;
+    min_dimensions = min_dimensions_arg.getValue();
+    max_dimensions = max_dimensions_arg.getValue();
+    min_radix = min_radix_arg.getValue();
+    max_radix = max_radix_arg.getValue();
+    min_concentration = min_concentration_arg.getValue();
+    max_concentration = max_concentration_arg.getValue();
+    min_terminals = min_terminals_arg.getValue();
+    max_terminals = max_terminals_arg.getValue();
+    if (max_terminals == 0) {
+      max_terminals = min_terminals * 2;
     }
-    minBandwidth = minBandwidthArg.getValue();
-    maxBandwidth = maxBandwidthArg.getValue();
-    maxWidth = maxWidthArg.getValue();
-    maxWeight = maxWeightArg.getValue();
-    fixedWidth = fixedWidthArg.getValue();
-    fixedWeight = fixedWeightArg.getValue();
-    maxResults = maxResultsArg.getValue();
-    printSettings = printSettingsArg.getValue();
-    costCalc = costCalcArg.getValue();
+    min_bandwidth = min_bandwidth_arg.getValue();
+    max_bandwidth = max_bandwidth_arg.getValue();
+    max_width = max_width_arg.getValue();
+    max_weight = max_weight_arg.getValue();
+    fixed_width = fixed_width_arg.getValue();
+    fixed_weight = fixed_weight_arg.getValue();
+    max_results = max_results_arg.getValue();
+    print_settings = print_settings_arg.getValue();
+    cost_calc = cost_calc_arg.getValue();
   } catch (TCLAP::ArgException& e) {
     throw std::runtime_error(e.error().c_str());
   }
 
   // if in verbose mode, print input settings
-  if (printSettings) {
-    printf("input settings:\n"
-           "  minDimensions = %lu\n"
-           "  maxDimensions = %lu\n"
-           "  minRadix = %lu\n"
-           "  maxRadix = %lu\n"
-           "  minConcentration = %lu\n"
-           "  maxConcentration = %lu\n"
-           "  minTerminals = %lu\n"
-           "  maxTerminals = %lu\n"
-           "  minBandwidth = %f\n"
-           "  maxBandwidth = %f\n"
-           "  maxWidth = %lu\n"
-           "  maxWeight = %lu\n"
-           "  fixedWidth = %s\n"
-           "  fixedWeight = %s\n"
-           "  maxResults = %lu\n"
-           "  costCalc = %s\n"
-           "\n",
-           minDimensions,
-           maxDimensions,
-           minRadix,
-           maxRadix,
-           minConcentration,
-           maxConcentration,
-           minTerminals,
-           maxTerminals,
-           minBandwidth,
-           maxBandwidth,
-           maxWidth,
-           maxWeight,
-           (fixedWidth ? "yes" : "no"),
-           (fixedWeight ? "yes" : "no"),
-           maxResults,
-           costCalc.c_str());
+  if (print_settings) {
+    printf(
+        "input settings:\n"
+        "  min_dimensions = %lu\n"
+        "  max_dimensions = %lu\n"
+        "  min_radix = %lu\n"
+        "  max_radix = %lu\n"
+        "  min_concentration = %lu\n"
+        "  max_concentration = %lu\n"
+        "  min_terminals = %lu\n"
+        "  max_terminals = %lu\n"
+        "  min_bandwidth = %f\n"
+        "  max_bandwidth = %f\n"
+        "  max_width = %lu\n"
+        "  max_weight = %lu\n"
+        "  fixed_width = %s\n"
+        "  fixed_weight = %s\n"
+        "  max_results = %lu\n"
+        "  cost_calc = %s\n"
+        "\n",
+        min_dimensions, max_dimensions, min_radix, max_radix, min_concentration,
+        max_concentration, min_terminals, max_terminals, min_bandwidth,
+        max_bandwidth, max_width, max_weight, (fixed_width ? "yes" : "no"),
+        (fixed_weight ? "yes" : "no"), max_results, cost_calc.c_str());
   }
 
   // create the cost calculator
-  Calculator* calc = CalculatorFactory::createCalculator(costCalc);
+  Calculator* calc = CalculatorFactory::createCalculator(cost_calc);
 
   // create and run the engine
-  Engine engine(
-      minDimensions, maxDimensions, minRadix, maxRadix, minConcentration,
-      maxConcentration, minTerminals, maxTerminals, minBandwidth, maxBandwidth,
-      maxWidth, maxWeight, fixedWidth, fixedWeight, maxResults, calc);
+  Engine engine(min_dimensions, max_dimensions, min_radix, max_radix,
+                min_concentration, max_concentration, min_terminals,
+                max_terminals, min_bandwidth, max_bandwidth, max_width,
+                max_weight, fixed_width, fixed_weight, max_results, calc);
   engine.run();
 
   // gather the results
   const std::deque<Hyperx>& results = engine.results();
 
   // create the output grid
-  const std::vector<std::string>& extFields = calc->extFields();
-  grid::Grid grid(1 + results.size(), 11 + extFields.size());
+  const std::vector<std::string>& ext_fields = calc->extFields();
+  grid::Grid grid(1 + results.size(), 11 + ext_fields.size());
 
   // format the regular header
   grid.set(0, 0, "#");
@@ -222,8 +206,8 @@ s32 main(s32 _argc, char** _argv) {
   grid.set(0, 10, "Cost");
 
   // format the extension header
-  for (u64 ext = 0; ext < extFields.size(); ext++) {
-    grid.set(0, 11 + ext, extFields.at(ext));
+  for (u64 ext = 0; ext < ext_fields.size(); ext++) {
+    grid.set(0, 11 + ext, ext_fields.at(ext));
   }
 
   // format the data section
@@ -241,18 +225,18 @@ s32 main(s32 _argc, char** _argv) {
     grid.set(row, 4, std::to_string(res.concentration));
     grid.set(row, 5, std::to_string(res.terminals));
     grid.set(row, 6, std::to_string(res.routers));
-    grid.set(row, 7, std::to_string(res.routerRadix));
+    grid.set(row, 7, std::to_string(res.router_radix));
     grid.set(row, 8, std::to_string(res.channels));
     grid.set(row, 9, strop::vecString<f64>(res.bisections, ',', 2).c_str());
     grid.set(row, 10, std::to_string(res.cost));
 
     // get extension values from the calculator
-    const std::unordered_map<std::string, std::string>& extValues =
+    const std::unordered_map<std::string, std::string>& ext_values =
         calc->extValues(res);
 
     // format the extensions values in the row
-    for (u64 ext = 0; ext < extFields.size(); ext++) {
-      grid.set(row, 11 + ext, extValues.at(extFields.at(ext)));
+    for (u64 ext = 0; ext < ext_fields.size(); ext++) {
+      grid.set(row, 11 + ext, ext_values.at(ext_fields.at(ext)));
     }
   }
 

@@ -31,12 +31,11 @@
 #ifndef SEARCH_CALCULATOR_H_
 #define SEARCH_CALCULATOR_H_
 
-#include <prim/prim.h>
-
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+#include "prim/prim.h"
 #include "search/Engine.h"
 
 class Calculator : public CostFunction {
@@ -50,8 +49,8 @@ class Calculator : public CostFunction {
       const Hyperx& _hyperx) const;
 
  private:
-  static const std::vector<std::string> EMPTY_FIELDS;
-  static const std::unordered_map<std::string, std::string> EMPTY_VALUES;
+  static const std::vector<std::string> kEmptyFields;
+  static const std::unordered_map<std::string, std::string> kEmptyValues;
 };
 
 #endif  // SEARCH_CALCULATOR_H_

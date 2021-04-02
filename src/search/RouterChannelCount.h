@@ -31,8 +31,7 @@
 #ifndef SEARCH_ROUTERCHANNELCOUNT_H_
 #define SEARCH_ROUTERCHANNELCOUNT_H_
 
-#include <prim/prim.h>
-
+#include "prim/prim.h"
 #include "search/Calculator.h"
 #include "search/Engine.h"
 
