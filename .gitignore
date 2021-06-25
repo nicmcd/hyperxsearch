@@ -1,3 +1,5 @@
 bazel-*
 .clang-format
-*__pycache__/
+cmake-build/
+cmake-local/
+*__pycache__*

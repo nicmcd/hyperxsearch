@@ -40,5 +40,6 @@ Calculator* CalculatorFactory::createCalculator(const std::string& _type) {
   } else {
     fprintf(stderr, "unknown cost calculator: %s\n", _type.c_str());
     assert(false);
+    return nullptr;
   }
 }
